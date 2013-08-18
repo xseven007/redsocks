@@ -29,7 +29,9 @@
 #include "utils.h"
 #include "parser.h"
 #include "log.h"
-
+#ifndef AI_ADDRCONFIG 
+#define AI_ADDRCONFIG 0x0020 
+#endif 
 #define FREE(ptr) do { free(ptr); ptr = NULL; } while (0)
 
 typedef int (*value_parser)(parser_context *context, void *addr, const char *token);
