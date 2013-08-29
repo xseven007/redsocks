@@ -6,9 +6,10 @@ OUT := redsocks
 VERSION := 0.41
 
 LIBS := -levent
-CFLAGS +=-fPIC -Os \
-	 -I ~/opt/include/ \
-	 -L ~/opt/.libs/  
+CFLAGS +=-fPIC -O2
+#CFLAGS +=-fPIC -Os \
+#	 -I ~/opt/include/ \
+#	 -L ~/opt/.libs/  
 override CFLAGS += -std=gnu99 -Wall
 #LDFLAGS += -fwhole-program
 
