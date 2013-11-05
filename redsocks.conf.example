@@ -40,7 +40,7 @@ redsocks {
 	 * use 0.0.0.0 if you want to listen on every interface.
 	 * `local_*' are used as port to redirect to.
 	 */
-	local_ip = 0.0.0.0;
+	local_ip = 127.0.0.1;
 	local_port = 12345;
 
 	// listen() queue length. Default value is SOMAXCONN and it should be
@@ -73,6 +73,11 @@ redsocks {
 	// fails for timeout/connection refuse, redsocks will try to
 	// connect to target via the proxy.
 	autoproxy = 0;
+	// timeout is meaningful when 'autoproxy' is non-zero.
+	// It specified timeout value when trying to connect to destination
+	// directly. Default is 10 seconds. When it is set to 0, default
+	// timeout value will be used.
+	timeout = 10;
 
 	// login = "foobar";
 	// password = "baz";
