@@ -81,53 +81,28 @@ The configuration for forwarding connections to GoAgent is like below:
 iptables example
 ================
 
-# Create new chain
-iptables -t nat -N PREROUTING
+	Create new chain
+	 iptables -t nat -N PREROUTING
 
-# Ignore your PREROUTING server's addresses
-# It's very IMPORTANT, just be careful.
-iptables -t nat -A PREROUTING -d 123.123.123.123 -j RETURN
+	Ignore your PREROUTING server's addresses
+	It's very IMPORTANT, just be careful.
+	 iptables -t nat -A PREROUTING -d 123.123.123.123 -j RETURN
 
-# Ignore LANs and any other addresses you'd like to bypass the proxy
-# See Wikipedia and RFC5735 for full list of reserved networks.
-# See ashi009/bestroutetb for a highly optimized CHN route list.
-iptables -t nat -A PREROUTING -d 0.0.0.0/8 -j RETURN
-iptables -t nat -A PREROUTING -d 10.0.0.0/8 -j RETURN
-iptables -t nat -A PREROUTING -d 127.0.0.0/8 -j RETURN
-iptables -t nat -A PREROUTING -d 169.254.0.0/16 -j RETURN
-iptables -t nat -A PREROUTING -d 172.16.0.0/12 -j RETURN
-iptables -t nat -A PREROUTING -d 192.168.0.0/16 -j RETURN
-iptables -t nat -A PREROUTING -d 224.0.0.0/4 -j RETURN
-iptables -t nat -A PREROUTING -d 240.0.0.0/4 -j RETURN
+	Ignore LANs and any other addresses you'd like to bypass the proxy
+	See Wikipedia and RFC5735 for full list of reserved networks.
+	See ashi009/bestroutetb for a highly optimized CHN route list.
+	 iptables -t nat -A PREROUTING -d 0.0.0.0/8 -j RETURN
+	 iptables -t nat -A PREROUTING -d 10.0.0.0/8 -j RETURN
+	 iptables -t nat -A PREROUTING -d 127.0.0.0/8 -j RETURN
+	 iptables -t nat -A PREROUTING -d 169.254.0.0/16 -j RETURN
+	 iptables -t nat -A PREROUTING -d 172.16.0.0/12 -j RETURN
+	 iptables -t nat -A PREROUTING -d 192.168.0.0/16 -j RETURN
+	 iptables -t nat -A PREROUTING -d 224.0.0.0/4 -j RETURN
+	 iptables -t nat -A PREROUTING -d 240.0.0.0/4 -j RETURN
 
-# Anything else should be redirected to PREROUTING's local port
-iptables -t nat -A PREROUTING -p tcp -j REDIRECT --to-ports 12345
+	Anything else should be redirected to PREROUTING's local port
+	 iptables -t nat -A PREROUTING -p tcp -j REDIRECT --to-ports 12345
 
-# Apply the rules
-iptables -t nat -A OUTPUT -p tcp -j PREROUTING
+	Apply the rules
+	 iptables -t nat -A OUTPUT -p tcp -j PREROUTING
 
-# Any tcp connection made by `luser' should be redirected.
-root# iptables -t nat -A OUTPUT -p tcp -m owner --uid-owner luser -j PREROUTING
-
-# You can also control that in more precise way using `gid-owner` from
-# iptables.
-root# groupadd socksified
-root# usermod --append --groups socksified luser
-root# iptables -t nat -A OUTPUT -p tcp -m owner --gid-owner socksified -j PREROUTING
-
-# Now you can launch your specific application with GID `socksified` and it
-# will be... socksified. See following commands (numbers may vary).
-# Note: you may have to relogin to apply `usermod` changes.
-luser$ id
-uid=1000(luser) gid=1000(luser) groups=1000(luser),1001(socksified)
-luser$ sg socksified -c id
-uid=1000(luser) gid=1001(socksified) groups=1000(luser),1001(socksified)
-luser$ sg socksified -c "firefox"
-
-# If you want to configure socksifying router, you should look at
-# doc/iptables-packet-flow.png and doc/iptables-packet-flow-ng.png
-# Note, you should have proper `local_ip' value to get external packets with
-# PREROUTING, default 127.0.0.1 will not go. See iptables(8) manpage regarding
-# REDIRECT target for details.
-# Depending on your network configuration iptables conf. may be as easy as:
-root# iptables -t nat -A PREROUTING --in-interface eth_int -p tcp -j PREROUTING
